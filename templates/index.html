@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="shortcut icon" href="{{ url_for('static', filename='hawaii_logo.png') }}">
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container">
+    <div class=navbar-header>
+      <a class="navbar-brand" href="#">
+        <img src="static/hawaii_logo.png" alt="" width="30" height="30" class="d-inline-block align-top">
+        Hawaiian Text Analyzer
+      </a>
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+<div class="bg-light p-5 text-center text-dark">
+  <div class=container>
+    <h1>Hawaiian Text Analyzer</h1>
+    <p class="lead">This website allows you to convert an image of a Hawaiian document into digital texts
+      in Hawaiian and English.
+    </p>
+    <a class="btn btn-primary btn-sm" href="/static/description.pdf" role="button" target="_blank">Learn more</a>
+    <hr class="my-4">
+    <p>Please upload an image file that you want to transcribe and translate.</p>
+    <form action="/submit" method="POST" enctype="multipart/form-data">
+      <div class="input-group">
+        <input type="file" class="form-control" name="image" id="inputGroupFile04"
+          aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+        <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04">Upload</button>
+      </div>
+    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="p-2 alert alert-{{ category }} alert-dismissible fade show" role="alert">
+      <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+  </div>
+</div>
+
+
+<div class="container">
+  <hr style="height:1px; visibility:hidden;" />
+
+  {% if tasks|length < 1 %}
+  <h2 style="text-align: center">There are no files. Upload one above!</h2>
+
+  {% else %}
+  <div style="overflow-x:auto;">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Added</th>
+          <th scope="col">Name</th>
+          <th scope="col">Image</th>
+          <th scope="col">Transcribed text</th>
+          <th scope="col">Translated text</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in tasks %}
+        <tr>
+          <td width=150> {{ task.date_created }} </td>
+          <td width=150> <a href="data:{{task.mimetype}};charset=utf-8;base64,{{task.image}}">{{ task.name }}</a> </td>
+          <td width=300> <img src="data:{{task.mimetype}};charset=utf-8;base64,{{task.image}}" align="left" style="width: 100%;
+            height: auto" /> </td>
+          <td style="text-align: left" width=300> {{ task.transcribed }} </td>
+          <td style="text-align: left" width=300> {{ task.translated }} </td>
+          <td>
+            <form action="/delete/{{task.id}}">
+              <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
