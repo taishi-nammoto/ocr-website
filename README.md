@@ -2,6 +2,8 @@
 Fig. 1: Visualization of the OCR system
 
 ## Description of “Hawaiian Texts Analyzer” Website
+[Hawaiian Texts Analyzer](https://hawaiian-text-analyser.herokuapp.com/) is deployed based on this repository. By uploading an image of Hawaiian article to the website, you can see the results. 
+
 I. The Use
 
 - By clicking on an upload button, an image selection display pops up. 
@@ -34,6 +36,3 @@ translation system. I plan to train this model by providing a sufficient
 English-Hawaiian paired corpus. The trained model will be implemented on this
 website. 
 
-
-The link below is the website based on this repository. By uploading an image of Hawaiian article to the website, you can see the results. 
-https://hawaiian-text-analyser.herokuapp.com/
