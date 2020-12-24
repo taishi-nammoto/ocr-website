@@ -7,12 +7,12 @@ import ocr_system
 import translate
 import psycopg2
 import base64
-
+import time
 
 app = Flask(__name__)
 app.secret_key = 'secret key'
 
-ENV = 'pro'
+ENV = 'dev'
 
 if ENV == 'dev':
     app.debug = True
@@ -54,6 +54,7 @@ def index():
 @app.route('/submit', methods=['POST', 'GET'])
 def submit():
     if request.method == 'POST':
+        start_time1 = time.time()
         if not request.files['image']:
             flash('Please select an image.', "warning")
             return redirect('/')
@@ -68,20 +69,32 @@ def submit():
         mimetype = image.mimetype
         now = datetime.now()
         date_created = now.strftime("%m/%d/%Y, %H:%M")
+        executionTimeOfUpload = (time.time() - start_time1)
+        print('upload', executionTimeOfUpload)
         try:
+            start_time2 = time.time()
             transcribed_text= ocr_system.image_to_string(img_binary)
+            executionTimeOfOcr = (time.time() - start_time2)
+            print('ocr',executionTimeOfOcr)
         except:
             flash('This file type is not supported. Please confirm the file type of the image again.', "danger")
             return redirect('/')
         if not transcribed_text:
             flash('No texts were detected. Please select an image of a Hawaiian document.', "warning")
             return redirect('/')
-        transcribed_text = transcribed_text.rstrip()
-        translated_text = translate.haw_to_eng(transcribed_text)
+        start_time3 = time.time()
+        #transcribed_text = transcribed_text.rstrip()
+        #translated_text = translate.haw_to_eng(transcribed_text)
+        translated_text = ' '
+        executionTimeOfTranslation = (time.time() - start_time3)
+        print('translation',executionTimeOfTranslation)
+        start_time4 = time.time()
         data = ImageFile(img_name, img_data, mimetype, date_created, transcribed_text, translated_text)
         db.session.add(data)
         db.session.commit()
         flash('The file has been successfully uploaded!', "success")
+        totalTime = (time.time() - start_time4)
+        print('commiting time',totalTime)
         return redirect('/')
     else:
         return redirect('/')
@@ -89,7 +102,7 @@ def submit():
 
 @app.route('/delete/<int:id>')
 def delete(id):
-    task_to_delete = ImageFile.query.filter_by(id=id).first()
+    task_to_delete = db.session.query(ImageFile).filter(id==id).first()
     try:
         db.session.delete(task_to_delete)
         db.session.commit()

@@ -26,7 +26,7 @@ English.
 
 III. The system information
 
-- Terratrac OCR is a trained OCR model which is a decentralized software
+- Tesseract OCR is a trained OCR model which is a decentralized software
 development model designed to encourage open collaboration. By turning
 parameters of the recognition system, the system is specifically adjusted to read
 Hawaiian letters from images. The custom OCR is implemented on this website
